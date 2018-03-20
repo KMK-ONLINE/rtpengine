@@ -28,8 +28,9 @@ struct control_ng {
 	struct callmaster *callmaster;
 	struct cookie_cache cookie_cache;
 	struct udp_listener udp_listeners[2];
+	const char *bbm_actual_ip;
 };
 
-struct control_ng *control_ng_new(struct poller *, endpoint_t *, struct callmaster *);
+struct control_ng *control_ng_new(struct poller *, endpoint_t *, struct callmaster *, const char *);
 
 #endif

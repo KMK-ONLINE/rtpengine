@@ -81,6 +81,7 @@ static int graphite_interval = 0;
 static char *spooldir;
 static char *rec_method = "pcap";
 static char *rec_format = "raw";
+static char *bbm_actual_ip;
 
 static void sighandler(gpointer x) {
 	sigset_t ss;
@@ -296,6 +297,7 @@ static void options(int *argc, char ***argv) {
 #ifdef WITH_IPTABLES_OPTION
 		{ "iptables-chain",0,0,	G_OPTION_ARG_STRING,	&g_iptables_chain,"Add explicit firewall rules to this iptables chain","STRING" },
 #endif
+		{ "bbm-actual-ip",0,0,	G_OPTION_ARG_STRING,	&bbm_actual_ip, "Actual address of this rtpengine node to add to replies (no format checking done).","STRING" },
 		{ NULL, }
 	};
 
@@ -562,7 +564,7 @@ no_kernel:
 	cn = NULL;
 	if (ng_listen_ep.port) {
 		interfaces_exclude_port(ng_listen_ep.port);
-		cn = control_ng_new(ctx->p, &ng_listen_ep, ctx->m);
+		cn = control_ng_new(ctx->p, &ng_listen_ep, ctx->m, bbm_actual_ip);
 		if (!cn)
 			die("Failed to open UDP control connection port");
 	}
