@@ -1,3 +1,10 @@
+ngcp-rtpengine (5.5.2.1+0~mr5.5.2.1bbm2) unstable; urgency=medium
+
+  * Do not add bbm_actual_ip for NG protocol ping reply. This makes it
+    possible to match the output exactly again for GCE health checks.
+
+ -- William Shallum <wshallum@bbmtek.com>  Wed, 21 Mar 2018 07:53:36 +0000
+
 ngcp-rtpengine (5.5.2.1+0~mr5.5.2.1bbm1) unstable; urgency=medium
 
   * Added bbm-actual-ip option and bbm_actual_ip in ng protocol reply.

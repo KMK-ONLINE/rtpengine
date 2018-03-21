@@ -240,7 +240,8 @@ static void control_ng_incoming(struct obj *obj, str *buf, const endpoint_t *sin
 		goto err_send;
 
 	bencode_dictionary_add_string(resp, "result", resultstr);
-	if (c->bbm_actual_ip) {
+	// do not include ip on ping as it makes it impossible to match the response exactly for health checks.
+	if (str_cmp(&cmd, "ping") && c->bbm_actual_ip) {
 		bencode_dictionary_add_string(resp, "bbm_actual_ip", c->bbm_actual_ip);
 	}
 
