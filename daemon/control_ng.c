@@ -246,6 +246,10 @@ static void control_ng_incoming(struct obj *obj, str *buf, const endpoint_t *sin
 		goto err_send;
 
 	bencode_dictionary_add_string(resp, "result", resultstr);
+	// do not include ip on ping as it makes it impossible to match the response exactly for health checks.
+	if (str_cmp(&cmd, "ping") && c->bbm_actual_ip) {
+		bencode_dictionary_add_string(resp, "bbm_actual_ip", c->bbm_actual_ip);
+	}
 
 	// update interval statistics
 	if (!str_cmp(&cmd, "offer")) {
@@ -314,7 +318,7 @@ out:
 
 
 
-struct control_ng *control_ng_new(struct poller *p, endpoint_t *ep, unsigned char tos) {
+struct control_ng *control_ng_new(struct poller *p, endpoint_t *ep, unsigned char tos, const char *bbm_actual_ip) {
 	struct control_ng *c;
 
 	if (!p)
@@ -322,6 +326,7 @@ struct control_ng *control_ng_new(struct poller *p, endpoint_t *ep, unsigned cha
 
 	c = obj_alloc0("control_ng", sizeof(*c), NULL);
 
+	c->bbm_actual_ip = bbm_actual_ip;
 	cookie_cache_init(&c->cookie_cache);
 	c->udp_listeners[0].fd = -1;
 	c->udp_listeners[1].fd = -1;

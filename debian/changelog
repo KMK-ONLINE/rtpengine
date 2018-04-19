@@ -1,3 +1,9 @@
+ngcp-rtpengine (6.2.1.0+0~mr6.2.1.0bbm1) unstable; urgency=medium
+
+  * Added bbm-actual-ip option and bbm_actual_ip in ng protocol reply.
+
+ -- William Shallum <wshallum@bbmtek.com>  Wed, 21 Mar 2018 07:53:36 +0000
+
 ngcp-rtpengine (6.2.1.0+0~mr6.2.1.0) unstable; urgency=medium
 
   [ Claudiu Boriga ]

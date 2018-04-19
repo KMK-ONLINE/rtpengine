@@ -294,6 +294,7 @@ static void options(int *argc, char ***argv) {
 		{ "iptables-chain",0,0,	G_OPTION_ARG_STRING,	&rtpe_config.iptables_chain,"Add explicit firewall rules to this iptables chain","STRING" },
 #endif
 		{ "codecs",	0, 0,	G_OPTION_ARG_NONE,	&codecs,		"Print a list of supported codecs and exit",	NULL },
+		{ "bbm-actual-ip",0,0,	G_OPTION_ARG_STRING,	&rtpe_config.bbm_actual_ip, "Actual address of this rtpengine node to add to replies (no format checking done).","STRING" },
 		{ NULL, }
 	};
 
@@ -627,7 +628,7 @@ no_kernel:
 	rtpe_control_ng = NULL;
 	if (rtpe_config.ng_listen_ep.port) {
 		interfaces_exclude_port(rtpe_config.ng_listen_ep.port);
-		rtpe_control_ng = control_ng_new(rtpe_poller, &rtpe_config.ng_listen_ep, rtpe_config.control_tos);
+		rtpe_control_ng = control_ng_new(rtpe_poller, &rtpe_config.ng_listen_ep, rtpe_config.control_tos, rtpe_config.bbm_actual_ip);
 		if (!rtpe_control_ng)
 			die("Failed to open UDP control connection port");
 	}

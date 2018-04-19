@@ -67,6 +67,7 @@ struct rtpengine_config {
 	char			*rec_method;
 	char			*rec_format;
 	char			*iptables_chain;
+	char			*bbm_actual_ip;
 };
 
 
