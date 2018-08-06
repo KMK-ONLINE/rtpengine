@@ -241,6 +241,7 @@ static void __ice_agent_initialize(struct ice_agent *ag) {
 	create_random_ice_string(call, &ag->pwd[1], 26);
 
 	atomic64_set(&ag->last_activity, poller_now);
+	atomic64_set(&ag->last_ping_received, poller_now);
 }
 
 static struct ice_agent *__ice_agent_new(struct call_media *media) {
@@ -1147,6 +1148,10 @@ int ice_request(struct stream_fd *sfd, const endpoint_t *src,
 			ret = __check_valid(ag);
 
 		mutex_unlock(&ag->lock);
+	}
+
+	if (ret >= 0) {
+		atomic64_set(&ag->last_ping_received, poller_now);
 	}
 
 	return ret;

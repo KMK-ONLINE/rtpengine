@@ -170,6 +170,7 @@ static void call_timer_iterator(void *key, void *val, void *ptr) {
 	struct callmaster *cm;
 	unsigned int check;
 	int good = 0;
+	int stun_ping_timeout = 0;
 	struct packet_stream *ps;
 	struct stream_fd *sfd;
 	int tmp_t_reason = UNKNOWN;
@@ -236,6 +237,14 @@ static void call_timer_iterator(void *key, void *val, void *ptr) {
 		g_hash_table_insert(hlp->addr_sfd, &sfd->socket.local, obj_get(sfd));
 
 no_sfd:
+		if (MEDIA_ISSET(ps->media, ICE_USE_CONSENT)) {
+			if (!stun_ping_timeout) {
+				if (poller_now - atomic64_get(&ps->media->ice_agent->last_ping_received) > 30) {
+					stun_ping_timeout = 1;
+				}
+			}
+		}
+
 		if (good)
 			goto next;
 
@@ -253,12 +262,18 @@ next:
 		;
 	}
 
-	if (good || IS_FOREIGN_CALL(c)) {
-		goto out;
+	if (stun_ping_timeout) {
+		ilog(LOG_INFO, "Closing call due to STUN ping timeout");
+		tmp_t_reason = TIMEOUT;
 	}
+	else {
+		if (good || IS_FOREIGN_CALL(c)) {
+			goto out;
+		}
 
-	if (c->ml_deleted)
-		goto out;
+		if (c->ml_deleted)
+			goto out;
+	}
 
 	for (it = c->monologues.head; it; it = it->next) {
 		ml = it->data;
@@ -1101,6 +1116,15 @@ static void __ice_offer(const struct sdp_ng_flags *flags, struct call_media *thi
 		MEDIA_SET(this, PASSTHRU);
 		MEDIA_SET(other, PASSTHRU);
 		return;
+	}
+
+	/* Custom: set consent flag if specified */
+	if (MEDIA_ISSET(this, ICE) && flags->ice_use_consent) {
+		MEDIA_SET(this, ICE_USE_CONSENT);
+	}
+
+	if (MEDIA_ISSET(other, ICE) && flags->ice_use_consent) {
+		MEDIA_SET(other, ICE_USE_CONSENT);
 	}
 
 	/* determine roles (even if we don't actually do ICE) */

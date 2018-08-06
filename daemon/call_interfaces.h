@@ -58,7 +58,8 @@ struct sdp_ng_flags {
 	    sdes_unauthenticated_srtp:1,
 	    sdes_encrypted_srtp:1,
 	    sdes_encrypted_srtcp:1,
-	    sdes_authenticated_srtp:1;
+	    sdes_authenticated_srtp:1,
+	    ice_use_consent:1; /* Assume peer implements RFC 7675, time out call when STUN pings not received */
 };
 
 extern int trust_address_def;

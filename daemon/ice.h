@@ -107,6 +107,7 @@ struct ice_agent {
 	const struct logical_intf	*logical_intf;
 	sockfamily_t		*desired_family;
 	atomic64		last_activity;
+	atomic64		last_ping_received;
 
 	mutex_t			lock; /* for elements below. and call must be locked in R */
 				/* lock order: in_lock first, then agent->lock */
